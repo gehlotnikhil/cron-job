@@ -1,5 +1,6 @@
 const express = require('express');
 const cron = require('node-cron');
+const axios = require('axios'); // Import Axios
 
 const app = express();
 const PORT = process.env.PORT || 8001; // Use the port provided by Render or default to 8000
@@ -9,30 +10,29 @@ const ServerUrl = process.env.ServerUrl || `http://localhost:8000`;
 
 cron.schedule("* * * * *", async () => {  // This schedules the job to run every minute for testing
     try {
-        // Make the DELETE request to the server
-        let result = await fetch(`${ServerUrl}/api/dailynewproblem/delete`, {
-            method: "DELETE",
+        // Make the DELETE request to the server using Axios
+        let result = await axios.delete(`${ServerUrl}/api/dailynewproblem/delete`, {
             headers: { "Content-Type": "application/json" },
         });
 
-        // Get raw response text to check the contents
-        let responseText = await result.text();
-        console.log('Response:', responseText);  // Log the raw response body
-
-        // Check if the response is not empty
-        if (responseText) {
-            try {
-                // Parse the response as JSON
-                let jsondata = JSON.parse(responseText);
-                console.log(jsondata);  // Log the parsed JSON data
-            } catch (error) {
-                console.error('Error parsing JSON:', error);
-            }
+        // Check if the response contains data
+        if (result.data) {
+            console.log('Response:', result.data);  // Log the response data
         } else {
             console.log('Empty response from server');
         }
-    } catch (error) {
-        console.error('Error in cron job:', error);
+    } catch (error:any) {
+        // Handle errors
+        if (error.response) {
+            // Server responded with a status other than 2xx
+            console.error('Error response:', error.response.data);
+        } else if (error.request) {
+            // Request was made but no response was received
+            console.error('No response received:', error.request);
+        } else {
+            // Something else happened in setting up the request
+            console.error('Error in request setup:', error.message);
+        }
     }
 });
 
