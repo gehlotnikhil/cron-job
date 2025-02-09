@@ -25,6 +25,8 @@ jobs:
         run: npx tsc
 
       - name: Run cron job
+        env:
+          ServerUrl: ${{ vars.SERVERURL }}  # ✅ Fix environment variable reference
         run: node dist/index.js  # Ensure correct path
 
       - name: Start Express Server
