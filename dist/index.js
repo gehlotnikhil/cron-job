@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 const axios = require('axios');
-const ServerUrl = process.env.ServerUrl || 'http://localhost:8000';
+const ServerUrl = "https://codegalaxy-server.onrender.com";
 function runCronJob() {
     return __awaiter(this, void 0, void 0, function* () {
         try {

@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-const ServerUrl = process.env.ServerUrl || 'http://localhost:8000';
+const ServerUrl = "https://codegalaxy-server.onrender.com";
 
 async function runCronJob() {
   try {
