@@ -8,44 +8,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-const express = require('express');
-const cron = require('node-cron');
-const axios = require('axios'); // Import Axios
-const app = express();
-const PORT = process.env.PORT || 8001; // Use the port provided by Render or default to 8000
-// Schedule the cron job to run at 12:00 AM daily
-const ServerUrl = process.env.ServerUrl || `http://localhost:8000`;
-cron.schedule("* * * * *", () => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        // Make the DELETE request to the server using Axios
-        let result = yield axios.delete(`${ServerUrl}/api/dailynewproblem/delete`, {
-            headers: { "Content-Type": "application/json" },
-        });
-        // Check if the response contains data
-        if (result.data) {
-            console.log('Response:', result.data); // Log the response data
+const axios = require('axios');
+const ServerUrl = process.env.ServerUrl || 'http://localhost:8000';
+function runCronJob() {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const response = yield axios.delete(`${ServerUrl}/api/dailynewproblem/delete`, {
+                headers: { 'Content-Type': 'application/json' },
+            });
+            console.log('Cron Job Response:', response.data);
         }
-        else {
-            console.log('Empty response from server');
+        catch (error) {
+            console.error('Error in cron job:', error.message);
         }
-    }
-    catch (error) {
-        // Handle errors
-        if (error.response) {
-            // Server responded with a status other than 2xx
-            console.error('Error response:', error.response.data);
-        }
-        else if (error.request) {
-            // Request was made but no response was received
-            console.error('No response received:', error.request);
-        }
-        else {
-            // Something else happened in setting up the request
-            console.error('Error in request setup:', error.message);
-        }
-    }
-}));
-// Start the Express server
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
+    });
+}
+runCronJob();
