@@ -16,12 +16,28 @@ const PORT = process.env.PORT || 8001; // Use the port provided by Render or def
 const ServerUrl = process.env.ServerUrl || `http://localhost:8000`;
 cron.schedule("* * * * *", () => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        // Make the DELETE request to the server
         let result = yield fetch(`${ServerUrl}/api/dailynewproblem/delete`, {
             method: "DELETE",
             headers: { "Content-Type": "application/json" },
         });
-        let jsondata = yield result.json();
-        console.log(jsondata);
+        // Get raw response text to check the contents
+        let responseText = yield result.text();
+        console.log('Response:', responseText); // Log the raw response body
+        // Check if the response is not empty
+        if (responseText) {
+            try {
+                // Parse the response as JSON
+                let jsondata = JSON.parse(responseText);
+                console.log(jsondata); // Log the parsed JSON data
+            }
+            catch (error) {
+                console.error('Error parsing JSON:', error);
+            }
+        }
+        else {
+            console.log('Empty response from server');
+        }
     }
     catch (error) {
         console.error('Error in cron job:', error);
