@@ -16,18 +16,19 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '14'
+          node-version: '16'
 
       - name: Install dependencies
         run: npm install
 
       - name: Compile TypeScript
-        run: npx tsc
+        run: npm run build
 
-      - name: Run cron job
-        env:
-          ServerUrl: ${{ vars.SERVERURL }}  # ✅ Fix environment variable reference
-        run: node dist/index.js  # Ensure correct path
+      - name: List Compiled Files (Debugging)
+        run: ls -la dist/
 
       - name: Start Express Server
-        run: nohup node dist/server.js &  # Change if needed
+        run: nohup node dist/server.js &
+
+      - name: Run cron job
+        run: node dist/index.js
